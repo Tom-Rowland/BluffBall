@@ -1,0 +1,22 @@
+name: Run pytest in Docker
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker image for testing
+        run: docker build -t BluffBall:test -f Dockerfile.test .
+
+      - name: Run tests in Docker container
+        run: docker run BluffBall:test
