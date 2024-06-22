@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image for testing
-        run: docker build -t BluffBall:test -f Dockerfile.test .
+        run: docker build -t bluffball:test -f Dockerfile.test .
 
       - name: Run tests in Docker container
-        run: docker run BluffBall:test
+        run: docker run bluffball:test
