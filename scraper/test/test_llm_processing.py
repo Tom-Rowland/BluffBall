@@ -8,4 +8,5 @@ def test_openai_completion():
     input = "Theo Walcott"
 
     output = llm_processing.openai_completion(prompt, input)
-    print(output)
+    assert type(output) == str
+    assert len(output) > 0
