@@ -63,6 +63,15 @@ def strip_html(soup: Tag) -> str:
 
 
 def extract_match_urls(soup: Tag) -> list[str]:
+    """
+    Extracts and returns a list of match URLs from a BeautifulSoup Tag object containing HTML content.
+
+    Parameters:
+    soup (Tag): A BeautifulSoup Tag object containing HTML content.
+
+    Returns:
+    list[str]: A list of URLs for football live matches found within the provided HTML content.
+    """
     urls = []
     # Find all anchor tags that have a 'href' containing '/sport/football/live/'
     live_football_links = soup.find_all(
