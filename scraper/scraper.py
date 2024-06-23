@@ -21,6 +21,7 @@ def scrape_results() -> str:
     response = requests.get(url)
     soup = BeautifulSoup(response.text, features="html.parser")
     scores_div = soup.find("div", id="main-data")
+    urls = extract_match_urls(scores_div)
     scores_text = strip_html(scores_div)
     return scores_text
 
@@ -59,3 +60,18 @@ def strip_html(soup: Tag) -> str:
     cleaned_text = " ".join(text.split())
 
     return cleaned_text
+
+
+def extract_match_urls(soup: Tag) -> list[str]:
+    urls = []
+    # Find all anchor tags that have a 'href' containing '/sport/football/live/'
+    live_football_links = soup.find_all(
+        "a", href=lambda href: href and "/sport/football/live/" in href
+    )
+
+    # Extract the href attribute from each matching anchor tag
+    for link in live_football_links:
+        href = link.get("href")
+        urls.append("https://www.bbc.co.uk" + href)
+
+    return urls

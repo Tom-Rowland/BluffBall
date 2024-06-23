@@ -1,5 +1,6 @@
+from .. import scraper
 from bs4 import BeautifulSoup
-import scraper
+import pytest
 
 
 def test_scrape_results():
@@ -62,3 +63,24 @@ def test_strip_html_script_and_style():
     soup = BeautifulSoup(html_content, "html.parser")
     cleaned_text = scraper.strip_html(soup)
     assert cleaned_text == expected_output
+
+
+@pytest.fixture
+def main_data_div():
+    with open("scraper/test/test_data/main-data div.txt", "r") as file:
+        html: str = file.read()
+    tag = BeautifulSoup(html, features="html.parser")
+    return tag
+
+
+def test_extract_match_urls(main_data_div):
+    assert scraper.extract_match_urls(main_data_div) == [
+        "https://www.bbc.co.uk/sport/football/live/cp44lnvkp2pt",
+        "https://www.bbc.co.uk/sport/football/live/c3gge1j73ldt",
+        "https://www.bbc.co.uk/sport/football/live/c511d502dxvt",
+        "https://www.bbc.co.uk/sport/football/live/cv22yndkddvt",
+        "https://www.bbc.co.uk/sport/football/live/cn33mjvepg7t",
+        "https://www.bbc.co.uk/sport/football/live/cpeekzd9xl0t",
+        "https://www.bbc.co.uk/sport/football/live/c9994xv72y1t",
+        "https://www.bbc.co.uk/sport/football/live/ce448z0182lt",
+    ]
