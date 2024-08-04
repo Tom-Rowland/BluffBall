@@ -1,4 +1,3 @@
-from scraper.data_classes import Match
 import dotenv
 import json
 import os
