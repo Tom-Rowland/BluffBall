@@ -41,28 +41,6 @@ def get_yesterday() -> str:
     return yesterday_str
 
 
-# def strip_html(soup: Tag) -> str:
-#     """
-#     Strip HTML tags from a BeautifulSoup Tag object and return the cleaned text.
-
-#     Parameters:
-#     soup (Tag): A BeautifulSoup Tag object containing HTML content.
-
-#     Returns:
-#     str: Cleaned text extracted from the HTML content, with HTML tags and unnecessary whitespace removed.
-#     """
-#     # for script_or_style in soup(["style"]):  # , "script"]):
-#     #    script_or_style.decompose()
-
-#     # Extract the text
-#     text = soup.get_text(separator=" ")
-
-#     # Remove leading/trailing whitespace and unnecessary line breaks
-#     cleaned_text = " ".join(text.split())
-
-#     return cleaned_text
-
-
 def extract_match_urls(soup: Tag) -> list[str]:
     """
     Extracts and returns a list of match URLs from a BeautifulSoup Tag object containing HTML content.
