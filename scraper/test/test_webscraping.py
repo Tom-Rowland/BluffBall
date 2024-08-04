@@ -3,13 +3,16 @@ from bs4 import BeautifulSoup
 import pytest
 
 
-def test_scrape_results():
+def test_scrape_match_reports():
     """
     Test that the scraper runs without errors.
-    The output is expected to be a paragraph but there are no specific assertions we can make about the contents.
+    The output is expected to be a list of strings.
     """
-    results = webscraping.scrape_results()
-    assert type(results) == str
+    reports = webscraping.scrape_yesterday_match_reports()
+    assert isinstance(reports, list)
+
+    for report in reports:
+        assert isinstance(report, str)
 
 
 def test_get_yesterday():
@@ -25,44 +28,6 @@ def test_get_yesterday():
             assert char == "-"
         else:
             assert char in "0123456789"
-
-
-def test_strip_html_basic_html():
-    """
-    Test that a simple HTML is stripped as expected
-    """
-    html_content = "<html><body><p>Hello, <b>world!</b></p></body></html>"
-    expected_output = "Hello, world!"
-    soup = BeautifulSoup(html_content, "html.parser")
-    cleaned_text = webscraping.strip_html(soup)
-    assert cleaned_text == expected_output
-
-
-def test_strip_html_script_and_style():
-    """
-    Test html stip with script and style
-    """
-    html_content = """
-    <html>
-    <head>
-    <style>
-    body {
-        font-size: 16px;
-    }
-    </style>
-    </head>
-    <body>
-    <p>Hello, <b>world!</b></p>
-    <script>
-    alert("Hello world!");
-    </script>
-    </body>
-    </html>
-    """
-    expected_output = "Hello, world!"
-    soup = BeautifulSoup(html_content, "html.parser")
-    cleaned_text = webscraping.strip_html(soup)
-    assert cleaned_text == expected_output
 
 
 @pytest.fixture
@@ -84,3 +49,29 @@ def test_extract_match_urls(main_data_div):
         "https://www.bbc.co.uk/sport/football/live/c9994xv72y1t",
         "https://www.bbc.co.uk/sport/football/live/ce448z0182lt",
     ]
+
+
+def test_pull_match_reports():
+    urls = [
+        "https://www.bbc.co.uk/sport/football/live/cnk4e0exnxdt",
+        "https://www.bbc.co.uk/sport/football/live/cw0yv7vd0jlt",
+        "https://www.bbc.co.uk/sport/football/live/cq5xn3n8xj8t",
+        "https://www.bbc.co.uk/sport/football/live/ce78rgrn7xpt",
+        "https://www.bbc.co.uk/sport/football/live/c3gv4gzzx64t",
+        "https://www.bbc.co.uk/sport/football/live/c0ve3vzzw7yt",
+        "https://www.bbc.co.uk/sport/football/live/cx72z733vg4t",
+        "https://www.bbc.co.uk/sport/football/live/cd1r7166060t",
+        "https://www.bbc.co.uk/sport/football/live/cw9yz9rr8jgt",
+        "https://www.bbc.co.uk/sport/football/live/c98qr8nn7p4t",
+        "https://www.bbc.co.uk/sport/football/live/cl4yk466l14t",
+        "https://www.bbc.co.uk/sport/football/live/cx92z9xx851t",
+        "https://www.bbc.co.uk/sport/football/live/cyj4zjrrd0zt",
+        "https://www.bbc.co.uk/sport/football/live/c72702ddxzxt",
+    ]
+
+    reports = webscraping.pull_match_reports(urls)
+    assert len(reports) == 6
+
+    for report in reports:
+        assert isinstance(report, str)
+        assert len(report) > 100

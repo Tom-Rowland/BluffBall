@@ -4,7 +4,7 @@ import datetime
 import requests
 
 
-def scrape_results() -> str:
+def scrape_yesterday_match_reports() -> list[str]:
     """
     Scrape football scores from the BBC Sport website for the previous day.
 
@@ -14,7 +14,7 @@ def scrape_results() -> str:
     the main data div, and returns the cleaned text containing the scores.
 
     Returns:
-    str: Text containing football scores extracted from the webpage.
+    str: Text containing match reports extracted from the webpage.
     """
     yesterday = get_yesterday()
     url = f"https://www.bbc.co.uk/sport/football/scores-fixtures/{yesterday}"
@@ -22,8 +22,9 @@ def scrape_results() -> str:
     soup = BeautifulSoup(response.text, features="html.parser")
     scores_div = soup.find("div", id="main-data")
     urls = extract_match_urls(scores_div)
-    scores_text = strip_html(scores_div)
-    return scores_text
+    reports = pull_match_reports(urls)
+
+    return reports
 
 
 def get_yesterday() -> str:
@@ -40,26 +41,26 @@ def get_yesterday() -> str:
     return yesterday_str
 
 
-def strip_html(soup: Tag) -> str:
-    """
-    Strip HTML tags from a BeautifulSoup Tag object and return the cleaned text.
+# def strip_html(soup: Tag) -> str:
+#     """
+#     Strip HTML tags from a BeautifulSoup Tag object and return the cleaned text.
 
-    Parameters:
-    soup (Tag): A BeautifulSoup Tag object containing HTML content.
+#     Parameters:
+#     soup (Tag): A BeautifulSoup Tag object containing HTML content.
 
-    Returns:
-    str: Cleaned text extracted from the HTML content, with HTML tags and unnecessary whitespace removed.
-    """
-    for script_or_style in soup(["script", "style"]):
-        script_or_style.decompose()
+#     Returns:
+#     str: Cleaned text extracted from the HTML content, with HTML tags and unnecessary whitespace removed.
+#     """
+#     # for script_or_style in soup(["style"]):  # , "script"]):
+#     #    script_or_style.decompose()
 
-    # Extract the text
-    text = soup.get_text(separator=" ")
+#     # Extract the text
+#     text = soup.get_text(separator=" ")
 
-    # Remove leading/trailing whitespace and unnecessary line breaks
-    cleaned_text = " ".join(text.split())
+#     # Remove leading/trailing whitespace and unnecessary line breaks
+#     cleaned_text = " ".join(text.split())
 
-    return cleaned_text
+#     return cleaned_text
 
 
 def extract_match_urls(soup: Tag) -> list[str]:
@@ -84,3 +85,38 @@ def extract_match_urls(soup: Tag) -> list[str]:
         urls.append("https://www.bbc.co.uk" + href)
 
     return urls
+
+
+def pull_match_reports(urls: list[str]) -> list[str]:
+    """
+    Extract match reports from a list of URLs.
+
+    This function iterates through a provided list of URLs, checks each URL for a
+    published match report, and uses a language model to extract relevant attributes
+    for each match. It then returns a list of Match objects containing the extracted
+    data.
+
+    Parameters:
+        urls (list[str]): A list of URLs to check for match reports.
+
+    Returns:
+        list[str]: A list of Match objects containing data extracted from the reports.
+    """
+    reports = []
+    for url in urls:
+        response = requests.get(f"{url}")
+        soup = BeautifulSoup(response.text)
+
+        report_tag = soup.find("a", attrs={"href": "#Report"})
+
+        # Check if the <a> tag exists
+        if not report_tag:
+            continue
+
+        paragraphs = soup.find_all("p", class_=lambda x: x and "Paragraph" in x)
+        report = ""
+        for p in paragraphs:
+            report += p.text + "\n"
+
+        reports.append(report)
+    return reports
