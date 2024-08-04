@@ -1,12 +1,24 @@
+from dataclasses import dataclass
 import dotenv
 import json
 import os
 import requests
+import webscraping
 
 dotenv.load_dotenv()
 
 
-def openai_completion(prompt, input: str) -> str:
+@dataclass
+class Match:
+    home_side: str
+    away_side: str
+    home_score: int
+    away_score: int
+    competition: str
+    discussion: list[dict]
+
+
+def openai_completion(prompt: str, input: str) -> str:
     url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Content-Type": "application/json",
@@ -27,3 +39,24 @@ def openai_completion(prompt, input: str) -> str:
     output = response["choices"][0]["message"]["content"]
 
     return output
+
+
+def generate_bluffball_matches(reports: str) -> list[Match]:
+    with open("scraper/prompts/process_report.md") as file:
+        prompt = file.read()
+
+    matches = []
+    for report in reports:
+        match = Match(
+            **json.loads(
+                openai_completion(prompt, report).replace("```", "").replace("json", "")
+            )
+        )
+        matches.append(match)
+
+    return matches
+
+
+if __name__ == "__main__":
+    reports = webscraping.scrape_yesterday_match_reports()
+    generate_bluffball_matches(reports)
