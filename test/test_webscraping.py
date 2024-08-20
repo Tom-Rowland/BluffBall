@@ -1,4 +1,4 @@
-from .. import webscraping
+from scraper import webscraping
 from bs4 import BeautifulSoup
 import pytest
 
@@ -32,7 +32,7 @@ def test_get_yesterday():
 
 @pytest.fixture
 def main_data_div():
-    with open("scraper/test/test_data/main-data div.txt", "r") as file:
+    with open("test/test_data/main-data div.txt", "r") as file:
         html: str = file.read()
     tag = BeautifulSoup(html, features="html.parser")
     return tag

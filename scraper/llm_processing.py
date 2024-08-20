@@ -3,7 +3,7 @@ import dotenv
 import json
 import os
 import requests
-import webscraping
+from scraper import webscraping
 
 dotenv.load_dotenv()
 
@@ -55,8 +55,3 @@ def generate_bluffball_matches(reports: str) -> list[Match]:
         matches.append(match)
 
     return matches
-
-
-if __name__ == "__main__":
-    reports = webscraping.scrape_yesterday_match_reports()
-    generate_bluffball_matches(reports)

@@ -83,7 +83,7 @@ def pull_match_reports(urls: list[str]) -> list[str]:
     reports = []
     for url in urls:
         response = requests.get(f"{url}")
-        soup = BeautifulSoup(response.text)
+        soup = BeautifulSoup(response.text,features='html.parser')
 
         report_tag = soup.find("a", attrs={"href": "#Report"})
 
